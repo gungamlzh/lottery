@@ -744,104 +744,104 @@
 
 // ============ YesApi 云端同步 ============
 const YESAPI_CONFIG = {
-  baseUrl: 'https://api.yesapi.cn',
+  baseUrl: 'https://api.yesapi.net',
   appKey: 'CB130BF8B0CD16C910DD906ABE99904D',
   tableName: 'lottery_session',
   sessionId: new URLSearchParams(window.location.search).get('sid') || 'default',
-  // 轮询间隔（毫秒）
   pollInterval: 3000,
   pollTimer: null
 };
-
-// 云端数据结构: { session_id, data_json: "{participants:[],winners:{},...}" }
 
 async function yesApiCall(service, extraParams = {}) {
   const params = new URLSearchParams({
     s: `App.Table.${service}`,
     app_key: YESAPI_CONFIG.appKey,
     model_name: YESAPI_CONFIG.tableName,
+    yesapi_allow_origin: '1',
+    return_data: '1',
     ...extraParams
   });
   try {
-    const resp = await fetch(`${YESAPI_CONFIG.baseUrl}/?${params}`, { method: 'GET' });
-    const data = await resp.json();
-    return data;
+    const resp = await fetch(`${YESAPI_CONFIG.baseUrl}/?${params.toString()}`);
+    const text = await resp.text();
+    console.log(`[YesApi] ${service}:`, text.substring(0, 200));
+    // YesApi return_data=1 直接返回 data 部分
+    try {
+      const outer = JSON.parse(text);
+      if (outer.data) return outer.data;
+    } catch(e) {}
+    return JSON.parse(text);
   } catch (e) {
-    console.warn('YesApi 请求失败:', e);
+    console.warn('[YesApi] 请求失败:', e);
     return null;
   }
 }
 
 // 初始化云端记录
 async function initCloudData() {
-  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
-  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
-  if (result && result.data && result.data.list && result.data.list.length > 0) {
-    // 已有记录，加载数据
-    const record = result.data.list[0];
+  // 先尝试查询
+  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
+  const result = await yesApiCall('FreeFindOne', { where: filter });
+  console.log('[YesApi] initCloudData result:', result);
+  
+  if (result && result.err_code === 0 && result.data) {
     try {
-      const cloudData = JSON.parse(record.data_json || '{}');
+      const cloudData = JSON.parse(result.data.data_json || '{}');
       if (cloudData.participants && cloudData.participants.length > 0) {
         state.participants = cloudData.participants;
         if (cloudData.winners) state.winners = cloudData.winners;
         renderCheckinList();
         updateStats();
-        // 恢复已完成的抽奖阶段
         if (state.winners[3]) { state.phaseCompleted[3] = true; restoreWinnerUI(3); }
         if (state.winners[2]) { state.phaseCompleted[2] = true; restoreWinnerUI(2); }
         if (state.winners[1]) { state.phaseCompleted[1] = true; restoreWinnerUI(1); }
       }
-    } catch(e) {}
-  } else {
-    // 创建新记录
-    await yesApiCall('Create', {
-      data: JSON.stringify({ session_id: YESAPI_CONFIG.sessionId, data_json: '{}' })
-    });
+    } catch(e) { console.error('[YesApi] parse error:', e); }
   }
 }
 
-// 保存数据到云端
+// 保存数据到云端（使用 CheckCreateOrUpdate 实现幂等）
 async function saveToCloud() {
   const cloudData = {
     participants: state.participants,
     winners: state.winners,
     phaseCompleted: state.phaseCompleted
   };
-  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
-  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
-  if (result && result.data && result.data.list && result.data.list.length > 0) {
-    const id = result.data.list[0].id;
-    await yesApiCall('Update', {
-      id: id,
-      data: JSON.stringify({ data_json: JSON.stringify(cloudData) })
-    });
+  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
+  
+  // 先查询获取 id
+  const findResult = await yesApiCall('FreeFindOne', { where: filter, fields: 'id' });
+  if (findResult && findResult.err_code === 0 && findResult.data && findResult.data.id) {
+    // 存在则更新
+    const id = findResult.data.id;
+    const updateData = { data_json: JSON.stringify(cloudData) };
+    await yesApiCall('Update', { id: String(id), data: JSON.stringify(updateData) });
+  } else {
+    // 不存在则创建
+    const createData = { session_id: YESAPI_CONFIG.sessionId, data_json: JSON.stringify(cloudData) };
+    await yesApiCall('Create', { data: JSON.stringify(createData) });
   }
 }
 
 // 从云端加载数据（轮询用）
 async function loadFromCloud() {
-  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
-  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
-  if (result && result.data && result.data.list && result.data.list.length > 0) {
-    const record = result.data.list[0];
+  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
+  const result = await yesApiCall('FreeFindOne', { where: filter });
+  if (result && result.err_code === 0 && result.data) {
     try {
-      const cloudData = JSON.parse(record.data_json || '{}');
-      // 检查是否有新的参与者
+      const cloudData = JSON.parse(result.data.data_json || '{}');
       const newParticipants = cloudData.participants || [];
-      const oldCount = state.participants.length;
       const newNames = newParticipants.filter(n => !state.participants.includes(n));
       if (newNames.length > 0) {
         newNames.forEach(name => {
           if (!state.participants.includes(name)) {
             state.participants.push(name);
-            // 显示新签到提示
             showToast(`📱 ${name} 已签到`);
           }
         });
         renderCheckinList();
         updateStats();
       }
-      // 检查是否有新的中奖结果
       if (cloudData.winners) {
         [3, 2, 1].forEach(level => {
           if (cloudData.winners[level] && !state.winners[level]) {
