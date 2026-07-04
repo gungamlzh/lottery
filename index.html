@@ -803,12 +803,6 @@ function showCheckinDialog() {
         outline:none;box-sizing:border-box;font-family:'Noto Sans SC',sans-serif;
         margin-bottom:12px;
       " onfocus="this.style.borderColor='rgba(255,215,0,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
-      <input id="checkinDept" type="text" placeholder="部门（选填）" style="
-        width:100%;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);
-        background:rgba(255,255,255,0.08);color:#fff;font-size:1rem;
-        outline:none;box-sizing:border-box;font-family:'Noto Sans SC',sans-serif;
-        margin-bottom:20px;
-      " onfocus="this.style.borderColor='rgba(255,215,0,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
       <button onclick="submitCheckin()" style="
         width:100%;padding:14px;border-radius:14px;border:none;
         background:linear-gradient(135deg,#ffd700,#ffaa00);
@@ -845,18 +839,14 @@ function submitCheckin() {
     return;
   }
 
-  // 带部门信息的签到名
-  const dept = deptInput ? deptInput.value.trim() : '';
-  const displayName = dept ? `${name}(${dept})` : name;
-
-  addParticipantDirect(displayName);
-  sessionStorage.setItem('checkedName', displayName);
+  addParticipantDirect(name);
+    sessionStorage.setItem('checkedName', name);
 
   // 关闭弹窗
   const overlay = document.getElementById('checkinOverlay');
   if (overlay) overlay.remove();
 
-  showToast(`🎉 ${displayName} 签到成功！`);
+  showToast(`🎉 ${name} 签到成功！`);
 }
 
 // ============ Toast 提示 ============
