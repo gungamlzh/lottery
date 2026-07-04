@@ -943,8 +943,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 // ============ 签到弹窗 ============
 function showCheckinDialog() {
-  // 如果已经签到过，不再弹出
-  if (state.participants.length > 0 && sessionStorage.getItem('checkedName')) {
+  // 如果当前手机已经签到过本次，不再弹出
+  if (sessionStorage.getItem('checkedName')) {
+    showToast('✅ 您已签到，无需重复签到');
     return;
   }
 
@@ -1365,8 +1366,7 @@ function showFinishScreen() {
 }
 
 function resetLottery() {
-  // 清空所有状态
-  state.participants = [];
+  // 只重置中奖结果，保留签到人员
   state.winners = { 3: null, 2: null, 1: null };
   state.rolling = { 3: false, 2: false, 1: false };
   state.phaseCompleted = { 3: false, 2: false, 1: false };
@@ -1391,10 +1391,10 @@ function resetLottery() {
   updateStats();
   renderCheckinList();
 
-  // 同步到云端（清空数据）
+  // 同步到云端（保留参与者，只清空中奖结果）
   saveToCloud();
 
-  // 清除签到标记，允许重新签到
+  // 清除签到标记，允许新人员扫码签到
   sessionStorage.removeItem('wxScanned');
   sessionStorage.removeItem('checkedName');
 }
