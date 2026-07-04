@@ -742,6 +742,163 @@
   };
 })();
 
+// ============ YesApi 云端同步 ============
+const YESAPI_CONFIG = {
+  baseUrl: 'https://api.yesapi.cn',
+  appKey: 'CB130BF8B0CD16C910DD906ABE99904D',
+  tableName: 'lottery_session',
+  sessionId: new URLSearchParams(window.location.search).get('sid') || 'default',
+  // 轮询间隔（毫秒）
+  pollInterval: 3000,
+  pollTimer: null
+};
+
+// 云端数据结构: { session_id, data_json: "{participants:[],winners:{},...}" }
+
+async function yesApiCall(service, extraParams = {}) {
+  const params = new URLSearchParams({
+    s: `App.Table.${service}`,
+    app_key: YESAPI_CONFIG.appKey,
+    model_name: YESAPI_CONFIG.tableName,
+    ...extraParams
+  });
+  try {
+    const resp = await fetch(`${YESAPI_CONFIG.baseUrl}/?${params}`, { method: 'GET' });
+    const data = await resp.json();
+    return data;
+  } catch (e) {
+    console.warn('YesApi 请求失败:', e);
+    return null;
+  }
+}
+
+// 初始化云端记录
+async function initCloudData() {
+  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
+  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
+  if (result && result.data && result.data.list && result.data.list.length > 0) {
+    // 已有记录，加载数据
+    const record = result.data.list[0];
+    try {
+      const cloudData = JSON.parse(record.data_json || '{}');
+      if (cloudData.participants && cloudData.participants.length > 0) {
+        state.participants = cloudData.participants;
+        if (cloudData.winners) state.winners = cloudData.winners;
+        renderCheckinList();
+        updateStats();
+        // 恢复已完成的抽奖阶段
+        if (state.winners[3]) { state.phaseCompleted[3] = true; restoreWinnerUI(3); }
+        if (state.winners[2]) { state.phaseCompleted[2] = true; restoreWinnerUI(2); }
+        if (state.winners[1]) { state.phaseCompleted[1] = true; restoreWinnerUI(1); }
+      }
+    } catch(e) {}
+  } else {
+    // 创建新记录
+    await yesApiCall('Create', {
+      data: JSON.stringify({ session_id: YESAPI_CONFIG.sessionId, data_json: '{}' })
+    });
+  }
+}
+
+// 保存数据到云端
+async function saveToCloud() {
+  const cloudData = {
+    participants: state.participants,
+    winners: state.winners,
+    phaseCompleted: state.phaseCompleted
+  };
+  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
+  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
+  if (result && result.data && result.data.list && result.data.list.length > 0) {
+    const id = result.data.list[0].id;
+    await yesApiCall('Update', {
+      id: id,
+      data: JSON.stringify({ data_json: JSON.stringify(cloudData) })
+    });
+  }
+}
+
+// 从云端加载数据（轮询用）
+async function loadFromCloud() {
+  const filter = JSON.stringify([["session_id","=",YESAPI_CONFIG.sessionId]]);
+  const result = await yesApiCall('Query', { where: encodeURIComponent(filter) });
+  if (result && result.data && result.data.list && result.data.list.length > 0) {
+    const record = result.data.list[0];
+    try {
+      const cloudData = JSON.parse(record.data_json || '{}');
+      // 检查是否有新的参与者
+      const newParticipants = cloudData.participants || [];
+      const oldCount = state.participants.length;
+      const newNames = newParticipants.filter(n => !state.participants.includes(n));
+      if (newNames.length > 0) {
+        newNames.forEach(name => {
+          if (!state.participants.includes(name)) {
+            state.participants.push(name);
+            // 显示新签到提示
+            showToast(`📱 ${name} 已签到`);
+          }
+        });
+        renderCheckinList();
+        updateStats();
+      }
+      // 检查是否有新的中奖结果
+      if (cloudData.winners) {
+        [3, 2, 1].forEach(level => {
+          if (cloudData.winners[level] && !state.winners[level]) {
+            state.winners[level] = cloudData.winners[level];
+            state.phaseCompleted[level] = true;
+            restoreWinnerUI(level);
+            updateStats();
+            renderCheckinList();
+          }
+        });
+      }
+    } catch(e) {}
+  }
+}
+
+// 恢复中奖者UI
+function restoreWinnerUI(prizeLevel) {
+  const winnerName = state.winners[prizeLevel];
+  if (!winnerName) return;
+  
+  const nameEl = document.getElementById(`rollingName${prizeLevel}`);
+  const nameBox = document.getElementById(`nameBox${prizeLevel}`);
+  const stopBtn = document.getElementById(`stopBtn${prizeLevel}`);
+  
+  if (nameEl) { nameEl.textContent = winnerName; nameEl.classList.add('winner'); }
+  if (nameBox) nameBox.classList.remove('rolling');
+  if (stopBtn) stopBtn.style.display = 'none';
+
+  const prizeNames = { 3: '三等奖', 2: '二等奖', 1: '一等奖' };
+  const prizeClasses = { 3: 'third', 2: 'second', 1: 'first' };
+  const prizeEmojis = { 3: '🥉', 2: '🥈', 1: '🥇' };
+
+  const panel = document.getElementById(`winnersPanel${prizeLevel}`);
+  if (panel) {
+    panel.innerHTML = `
+      <div class="winner-card ${prizeClasses[prizeLevel]}">
+        <div class="prize-icon">${prizeEmojis[prizeLevel]}</div>
+        <div>
+          <div class="prize-name">${prizeNames[prizeLevel]}</div>
+          <div class="winner-name">${winnerName}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (prizeLevel === 3) {
+    const btn = document.getElementById('nextBtn3'); if (btn) btn.style.display = '';
+  } else if (prizeLevel === 2) {
+    const btn = document.getElementById('nextBtn2'); if (btn) btn.style.display = '';
+  }
+}
+
+// 启动轮询
+function startPolling() {
+  YESAPI_CONFIG.pollTimer = setInterval(loadFromCloud, YESAPI_CONFIG.pollInterval);
+}
+
 // ============ 应用状态 ============
 const state = {
   participants: [],
@@ -753,20 +910,26 @@ const state = {
 };
 
 // ============ 初始化 ============
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   createStars();
-  // 生成二维码（内容为当前页面URL + 签到参数）
-  const qrData = window.location.href.split('?')[0] + '?action=checkin&t=' + Date.now();
-  window.generateQRCode(qrData);
 
-  // 检查URL参数 - 如果是从微信扫码打开的页面
   const params = new URLSearchParams(window.location.search);
-  if (params.get('action') === 'checkin' && !sessionStorage.getItem('wxScanned')) {
-    // 标记已扫码，避免刷新重复签到
+  const isCheckin = params.get('action') === 'checkin';
+
+  if (isCheckin && !sessionStorage.getItem('wxScanned')) {
+    // 签到模式：弹出签到表单
     sessionStorage.setItem('wxScanned', '1');
-    // 弹出签到表单让用户填写信息
     showCheckinDialog();
+  } else if (!isCheckin) {
+    // 主页面模式：加载云端数据 + 启动轮询
+    await initCloudData();
+    startPolling();
   }
+
+  // 生成二维码（带 sid 参数确保同一会话）
+  const baseUrl = window.location.href.split('?')[0];
+  const qrData = baseUrl + '?action=checkin&sid=' + YESAPI_CONFIG.sessionId + '&t=' + Date.now();
+  window.generateQRCode(qrData);
 });
 
 // ============ 签到弹窗 ============
@@ -974,6 +1137,8 @@ function addParticipantDirect(name) {
   state.participants.push(name);
   renderCheckinList();
   updateStats();
+  // 同步到云端
+  saveToCloud();
 }
 
 // ============ 签到列表渲染 ============
@@ -1140,6 +1305,9 @@ function announceWinner(prizeLevel, winnerName) {
 
   // 播放烟花效果
   launchConfetti();
+
+  // 同步中奖结果到云端
+  saveToCloud();
 
   // 更新导航按钮
   document.querySelector(`[data-phase="lottery${prizeLevel}"]`).classList.add('completed');
