@@ -188,7 +188,7 @@
     font-size: 0.7rem; font-weight: 700;
     flex-shrink: 0;
   }
-  .checkin-item .name { font-size: 0.85rem; white-space: nowrap; flex: 1; }
+  .checkin-item .name { font-size: 0.85rem; white-space: nowrap; flex: 1; overflow: hidden; text-overflow: ellipsis; }
   .checkin-item .time { margin-left: auto; font-size: 0.75rem; color: rgba(100,50,80,0.4); }
 
   .no-participants {
@@ -968,8 +968,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 // ============ 签到弹窗 ============
 function showCheckinDialog() {
-  // 如果当前手机已经签到过本次，不再弹出
-  if (sessionStorage.getItem('checkedName')) {
+  // 如果当前手机已经签到过，不再弹出（使用 localStorage 持久化）
+  if (localStorage.getItem('lotteryCheckedName')) {
     showToast('✅ 您已签到，无需重复签到');
     return;
   }
@@ -1038,7 +1038,7 @@ function submitCheckin() {
   }
 
   addParticipantDirect(name);
-    sessionStorage.setItem('checkedName', name);
+    localStorage.setItem('lotteryCheckedName', name);
 
   // 关闭弹窗
   const overlay = document.getElementById('checkinOverlay');
@@ -1191,11 +1191,12 @@ function renderCheckinList() {
     const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ff85a2', '#ff3399', '#ff99cc', '#ff6699', '#e91e8c'];
     const color = colors[i % colors.length];
     const initial = name.charAt(0);
+    const displayName = name.length > 5 ? name.substring(0, 5) + '...' : name;
     const winnerTag = isWinner ? ' <span style="color:#ff1493;font-size:0.75rem;">🏆 已中奖</span>' : '';
     return `
-      <div class="checkin-item" style="${isWinner ? 'opacity:0.4' : ''}">
+      <div class="checkin-item" style="${isWinner ? 'opacity:0.4' : ''}" title="${name}">
         <div class="avatar" style="background:${color}">${initial}</div>
-        <span class="name">${name}${winnerTag}</span>
+        <span class="name">${displayName}${winnerTag}</span>
       </div>
     `;
   }).join('');
@@ -1421,7 +1422,7 @@ function resetLottery() {
 
   // 清除签到标记，允许新人员扫码签到
   sessionStorage.removeItem('wxScanned');
-  sessionStorage.removeItem('checkedName');
+  localStorage.removeItem('lotteryCheckedName');
 }
 
 // ============ 烟花/彩带效果 ============
