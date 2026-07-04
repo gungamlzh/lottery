@@ -46,14 +46,16 @@
   /* ========== 标题 ========== */
   .main-title {
     font-size: 3.5rem; font-weight: 900;
-    color: #ff1493;
+    background: linear-gradient(90deg, #ff69b4, #ff1493, #ff69b4);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
     text-align: center;
     margin-bottom: 10px;
-    text-shadow: 0 0 20px rgba(255, 105, 180, 0.4), 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: center;
-    flex-wrap: nowrap;
-    white-space: nowrap;
+    text-shadow: 0 0 40px rgba(255, 105, 180, 0.3);
+    filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.4));
   }
   .main-title span {
     display: inline-block;
@@ -925,23 +927,6 @@ const state = {
 // ============ 初始化 ============
 window.addEventListener('DOMContentLoaded', async () => {
   createStars();
-
-  // 标题半圆弧形效果
-  const title = document.querySelector('.main-title');
-  if (title) {
-    const text = title.textContent;
-    title.innerHTML = text.split('').map((char) => `<span>${char}</span>`).join('');
-    const chars = title.querySelectorAll('span');
-    const total = chars.length;
-    const radius = 300;
-    chars.forEach((char, i) => {
-      const angle = (Math.PI / (total + 1)) * (i + 1) - Math.PI / 2;
-      const x = Math.cos(angle) * radius;
-      const y = -Math.sin(angle) * radius;
-      char.style.display = 'inline-block';
-      char.style.transform = `translateY(${y}px)`;
-    });
-  }
 
   const params = new URLSearchParams(window.location.search);
   const isCheckin = params.get('action') === 'checkin';
