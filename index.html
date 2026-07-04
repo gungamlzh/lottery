@@ -12,8 +12,8 @@
   body {
     font-family: 'Noto Sans SC', sans-serif;
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    color: #fff;
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe0ec 50%, #ffd6e0 100%);
+    color: #333;
     overflow-x: hidden;
   }
 
@@ -25,7 +25,7 @@
   .star {
     position: absolute;
     width: 2px; height: 2px;
-    background: #fff;
+    background: #ffb6c1;
     border-radius: 50%;
     animation: twinkle var(--dur) ease-in-out infinite alternate;
   }
@@ -45,15 +45,15 @@
 
   /* ========== 标题 ========== */
   .main-title {
-    font-size: 3rem; font-weight: 900;
-    background: linear-gradient(90deg, #ffd700, #ff6b35, #ffd700);
+    font-size: 3.5rem; font-weight: 900;
+    background: linear-gradient(90deg, #ff69b4, #ff1493, #ff69b4);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shimmer 3s linear infinite;
     text-align: center;
     margin-bottom: 10px;
-    text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    text-shadow: 0 0 40px rgba(255, 105, 180, 0.3);
   }
   @keyframes shimmer {
     0% { background-position: 0% center; }
@@ -61,7 +61,7 @@
   }
 
   .sub-title {
-    font-size: 1.1rem; color: rgba(255,255,255,0.6);
+    font-size: 1.1rem; color: rgba(100,50,80,0.7);
     margin-bottom: 30px; text-align: center;
   }
 
@@ -73,10 +73,10 @@
   }
   .phase-btn {
     padding: 12px 28px;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,105,180,0.3);
     border-radius: 50px;
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.5);
+    background: rgba(255,105,180,0.08);
+    color: rgba(100,50,80,0.7);
     font-size: 1rem; font-weight: 500;
     cursor: pointer;
     transition: all 0.4s ease;
@@ -84,15 +84,15 @@
     position: relative; overflow: hidden;
   }
   .phase-btn.active {
-    border-color: #ffd700;
-    color: #ffd700;
-    background: rgba(255, 215, 0, 0.1);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    border-color: #ff69b4;
+    color: #ff1493;
+    background: rgba(255, 105, 180, 0.15);
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.2);
   }
   .phase-btn.completed {
-    border-color: rgba(255, 215, 0, 0.3);
-    color: rgba(255, 215, 0, 0.7);
-    background: rgba(255, 215, 0, 0.05);
+    border-color: rgba(255, 105, 180, 0.3);
+    color: rgba(255, 105, 180, 0.7);
+    background: rgba(255, 105, 180, 0.08);
   }
   .phase-btn:hover { transform: translateY(-2px); }
 
@@ -105,22 +105,22 @@
   .qr-section.show { display: flex; }
 
   .qr-card {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,105,180,0.3);
     border-radius: 20px;
     padding: 40px;
     backdrop-filter: blur(20px);
     text-align: center;
     margin-bottom: 30px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 60px rgba(255,105,180,0.15);
   }
 
   .qr-card h3 {
-    font-size: 1.5rem; color: #ffd700;
+    font-size: 1.5rem; color: #ff1493;
     margin-bottom: 8px;
   }
   .qr-card p {
-    color: rgba(255,255,255,0.6); margin-bottom: 25px;
+    color: rgba(100,50,80,0.6); margin-bottom: 25px;
     font-size: 0.95rem;
   }
 
@@ -131,7 +131,7 @@
     border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
     padding: 15px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 30px rgba(255,105,180,0.2);
   }
   .qr-code-wrapper canvas {
     width: 100% !important;
@@ -139,7 +139,7 @@
   }
   .scan-hint {
     display: flex; align-items: center; gap: 8px;
-    color: rgba(255,255,255,0.5);
+    color: rgba(100,50,80,0.5);
     font-size: 0.9rem;
     margin-top: 5px;
   }
@@ -147,8 +147,8 @@
 
   /* ========== 签到列表 ========== */
   .checkin-list {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,200,220,0.15);
+    border: 1px solid rgba(255,105,180,0.2);
     border-radius: 16px;
     padding: 20px;
     width: 100%; max-width: 500px;
@@ -157,10 +157,10 @@
     overflow-y: auto;
   }
   .checkin-list::-webkit-scrollbar { width: 4px; }
-  .checkin-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+  .checkin-list::-webkit-scrollbar-thumb { background: rgba(255,105,180,0.3); border-radius: 2px; }
 
   .checkin-list h4 {
-    font-size: 0.9rem; color: rgba(255,255,255,0.5);
+    font-size: 0.9rem; color: rgba(100,50,80,0.5);
     margin-bottom: 12px;
     text-align: center;
   }
@@ -169,22 +169,22 @@
     padding: 8px 12px;
     border-radius: 8px;
     margin-bottom: 4px;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,200,220,0.1);
     animation: slideIn 0.3s ease;
   }
   .checkin-item .avatar {
     width: 32px; height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
     display: flex; align-items: center; justify-content: center;
     font-size: 0.8rem; font-weight: 700;
   }
   .checkin-item .name { font-size: 0.95rem; }
-  .checkin-item .time { margin-left: auto; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+  .checkin-item .time { margin-left: auto; font-size: 0.75rem; color: rgba(100,50,80,0.4); }
 
   .no-participants {
     text-align: center; padding: 30px;
-    color: rgba(255,255,255,0.3);
+    color: rgba(100,50,80,0.3);
     font-size: 0.9rem;
   }
 
@@ -208,16 +208,16 @@
     font-size: 2.5rem; font-weight: 900;
     margin-bottom: 20px;
   }
-  .prize-label.third { color: #cd7f32; text-shadow: 0 0 30px rgba(205,127,50,0.4); }
-  .prize-label.second { color: #c0c0c0; text-shadow: 0 0 30px rgba(192,192,192,0.4); }
-  .prize-label.first { color: #ffd700; text-shadow: 0 0 40px rgba(255,215,0,0.5); }
+  .prize-label.third { color: #ff69b4; text-shadow: 0 0 30px rgba(255,105,180,0.4); }
+  .prize-label.second { color: #ff1493; text-shadow: 0 0 30px rgba(255,20,147,0.4); }
+  .prize-label.first { color: #ff69b4; text-shadow: 0 0 40px rgba(255,105,180,0.5); }
 
   /* 滚动名字框 */
   .name-display-box {
     width: 100%;
     height: 120px;
-    background: rgba(255,255,255,0.06);
-    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,200,220,0.15);
+    border: 2px solid rgba(255,105,180,0.25);
     border-radius: 20px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 25px;
@@ -225,19 +225,19 @@
     position: relative;
   }
   .name-display-box.rolling {
-    border-color: #ffd700;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+    border-color: #ff69b4;
+    box-shadow: 0 0 30px rgba(255, 105, 180, 0.2);
   }
 
   .rolling-name {
     font-size: 3rem; font-weight: 700;
-    color: #fff;
+    color: #333;
     transition: none;
   }
   .rolling-name.winner {
-    color: #ffd700;
+    color: #ff1493;
     animation: winnerPop 0.5s ease;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
   }
 
   @keyframes winnerPop {
@@ -255,17 +255,17 @@
   }
   .candidate-chip {
     padding: 6px 14px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,200,220,0.15);
+    border: 1px solid rgba(255,105,180,0.2);
     border-radius: 20px;
     font-size: 0.85rem;
-    color: rgba(255,255,255,0.6);
+    color: rgba(100,50,80,0.6);
     transition: all 0.3s ease;
   }
   .candidate-chip.highlight {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: #ffd700;
-    color: #ffd700;
+    background: rgba(255, 105, 180, 0.2);
+    border-color: #ff69b4;
+    color: #ff1493;
   }
   .candidate-chip.out {
     opacity: 0.2;
@@ -294,42 +294,42 @@
   }
 
   .btn-start {
-    background: linear-gradient(135deg, #ffd700, #ff6b35);
-    color: #1a1a2e;
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    color: #fff;
+    box-shadow: 0 8px 30px rgba(255, 105, 180, 0.3);
   }
   .btn-start:hover:not(:disabled) {
-    box-shadow: 0 12px 40px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 12px 40px rgba(255, 105, 180, 0.5);
   }
 
   .btn-stop {
-    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    background: linear-gradient(135deg, #ff1493, #ff69b4);
     color: #fff;
-    box-shadow: 0 8px 30px rgba(255, 65, 108, 0.3);
+    box-shadow: 0 8px 30px rgba(255, 20, 147, 0.3);
   }
 
   .btn-next {
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.3);
-    color: #fff;
+    background: rgba(255,105,180,0.1);
+    border: 2px solid rgba(255,105,180,0.3);
+    color: #ff1493;
   }
   .btn-next:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,105,180,0.2);
   }
 
   .btn-admin {
     padding: 10px 24px;
     font-size: 0.9rem;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.6);
+    background: rgba(255,105,180,0.08);
+    border: 1px solid rgba(255,105,180,0.25);
+    color: rgba(100,50,80,0.6);
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s;
   }
   .btn-admin:hover {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+    background: rgba(255,105,180,0.15);
+    color: #ff1493;
   }
 
   /* ========== 中奖记录 ========== */
@@ -339,15 +339,15 @@
   }
   .winners-panel h3 {
     font-size: 1.2rem;
-    color: rgba(255,255,255,0.7);
+    color: rgba(100,50,80,0.7);
     margin-bottom: 15px;
     text-align: center;
   }
   .winner-card {
     display: flex; align-items: center; gap: 15px;
     padding: 16px 20px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,200,220,0.15);
+    border: 1px solid rgba(255,105,180,0.2);
     border-radius: 16px;
     margin-bottom: 10px;
     animation: slideIn 0.5s ease;
@@ -358,15 +358,15 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
   }
-  .winner-card.third .prize-icon { background: rgba(205,127,50,0.2); }
-  .winner-card.second .prize-icon { background: rgba(192,192,192,0.2); }
-  .winner-card.first .prize-icon { background: rgba(255,215,0,0.2); }
+  .winner-card.third .prize-icon { background: rgba(255,105,180,0.2); }
+  .winner-card.second .prize-icon { background: rgba(255,20,147,0.2); }
+  .winner-card.first .prize-icon { background: rgba(255,105,180,0.3); }
 
-  .winner-card .prize-name { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+  .winner-card .prize-name { font-size: 0.85rem; color: rgba(100,50,80,0.5); }
   .winner-card .winner-name { font-size: 1.3rem; font-weight: 700; }
-  .winner-card.third .winner-name { color: #cd7f32; }
-  .winner-card.second .winner-name { color: #c0c0c0; }
-  .winner-card.first .winner-name { color: #ffd700; }
+  .winner-card.third .winner-name { color: #ff69b4; }
+  .winner-card.second .winner-name { color: #ff1493; }
+  .winner-card.first .winner-name { color: #ff69b4; }
 
   /* ========== 烟花/彩带 ========== */
   .confetti-container {
@@ -403,9 +403,9 @@
     pointer-events: none;
     z-index: 0;
   }
-  .glow-orb.g1 { width: 400px; height: 400px; background: #667eea; top: -100px; left: -100px; }
-  .glow-orb.g2 { width: 350px; height: 350px; background: #f093fb; bottom: -100px; right: -100px; }
-  .glow-orb.g3 { width: 300px; height: 300px; background: #ffd700; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .glow-orb.g1 { width: 400px; height: 400px; background: #ff69b4; top: -100px; left: -100px; }
+  .glow-orb.g2 { width: 350px; height: 350px; background: #ff1493; bottom: -100px; right: -100px; }
+  .glow-orb.g3 { width: 300px; height: 300px; background: #ffb6c1; top: 50%; left: 50%; transform: translate(-50%,-50%); }
 
   /* ========== 统计栏 ========== */
   .stats-bar {
@@ -419,12 +419,12 @@
   }
   .stat-num {
     font-size: 2rem; font-weight: 900;
-    background: linear-gradient(135deg, #ffd700, #ff6b35);
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   .stat-label {
-    font-size: 0.8rem; color: rgba(255,255,255,0.4);
+    font-size: 0.8rem; color: rgba(100,50,80,0.4);
     margin-top: 2px;
   }
 
@@ -439,30 +439,30 @@
   .add-input {
     padding: 10px 18px;
     border-radius: 50px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.06);
-    color: #fff;
+    border: 1px solid rgba(255,105,180,0.25);
+    background: rgba(255,200,220,0.1);
+    color: #333;
     font-size: 0.95rem;
     width: 220px;
     font-family: 'Noto Sans SC', sans-serif;
     outline: none;
     transition: border-color 0.3s;
   }
-  .add-input::placeholder { color: rgba(255,255,255,0.3); }
-  .add-input:focus { border-color: #ffd700; }
+  .add-input::placeholder { color: rgba(100,50,80,0.3); }
+  .add-input:focus { border-color: #ff69b4; }
 
   .add-btn {
     padding: 10px 24px;
     border-radius: 50px;
     border: none;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
     color: #fff;
     font-size: 0.95rem;
     cursor: pointer;
     font-family: 'Noto Sans SC', sans-serif;
     transition: all 0.3s;
   }
-  .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+  .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,105,180,0.4); }
 
   /* ========== 完成画面 ========== */
   .finish-screen {
@@ -484,17 +484,17 @@
   }
   .finish-title {
     font-size: 2.5rem; font-weight: 900;
-    color: #ffd700;
+    color: #ff1493;
     margin-bottom: 10px;
   }
   .finish-sub {
-    color: rgba(255,255,255,0.5);
+    color: rgba(100,50,80,0.5);
     margin-bottom: 30px;
   }
 
   /* ========== 响应式 ========== */
   @media (max-width: 600px) {
-    .main-title { font-size: 2rem; }
+    .main-title { font-size: 2.5rem; }
     .prize-label { font-size: 1.8rem; }
     .rolling-name { font-size: 2rem; }
     .name-display-box { height: 90px; }
@@ -522,13 +522,13 @@
       📱 扫码签到
     </button>
     <button class="phase-btn" data-phase="lottery3" onclick="switchPhase('lottery3')">
-      🥉 三等奖
+      🥉 幸运之星
     </button>
     <button class="phase-btn" data-phase="lottery2" onclick="switchPhase('lottery2')">
-      🥈 二等奖
+      🥈 超级幸运之星
     </button>
     <button class="phase-btn" data-phase="lottery1" onclick="switchPhase('lottery1')">
-      🥇 一等奖
+      🥇 超级幸运之星plus
     </button>
   </div>
 
@@ -573,10 +573,10 @@
     </div>
   </div>
 
-  <!-- ===== 三等奖 ===== -->
+  <!-- ===== 幸运之星 ===== -->
   <div class="lottery-section" id="lottery3Section">
     <div class="lottery-stage">
-      <div class="prize-label third">🥉 三等奖 抽奖</div>
+      <div class="prize-label third">🥉 幸运之星 抽奖</div>
       <div class="name-display-box" id="nameBox3">
         <span class="rolling-name" id="rollingName3">等待开始</span>
       </div>
@@ -590,10 +590,10 @@
     <div class="winners-panel" id="winnersPanel3"></div>
   </div>
 
-  <!-- ===== 二等奖 ===== -->
+  <!-- ===== 超级幸运之星 ===== -->
   <div class="lottery-section" id="lottery2Section">
     <div class="lottery-stage">
-      <div class="prize-label second">🥈 二等奖 抽奖</div>
+      <div class="prize-label second">🥈 超级幸运之星 抽奖</div>
       <div class="name-display-box" id="nameBox2">
         <span class="rolling-name" id="rollingName2">等待开始</span>
       </div>
@@ -607,10 +607,10 @@
     <div class="winners-panel" id="winnersPanel2"></div>
   </div>
 
-  <!-- ===== 一等奖 ===== -->
+  <!-- ===== 超级幸运之星plus ===== -->
   <div class="lottery-section" id="lottery1Section">
     <div class="lottery-stage">
-      <div class="prize-label first">🥇 一等奖 抽奖</div>
+      <div class="prize-label first">🥇 超级幸运之星plus 抽奖</div>
       <div class="name-display-box" id="nameBox1">
         <span class="rolling-name" id="rollingName1">等待开始</span>
       </div>
@@ -879,7 +879,7 @@ function restoreWinnerUI(prizeLevel) {
   if (nameBox) nameBox.classList.remove('rolling');
   if (stopBtn) stopBtn.style.display = 'none';
 
-  const prizeNames = { 3: '三等奖', 2: '二等奖', 1: '一等奖' };
+  const prizeNames = { 3: '幸运之星', 2: '超级幸运之星', 1: '超级幸运之星plus' };
   const prizeClasses = { 3: 'third', 2: 'second', 1: 'first' };
   const prizeEmojis = { 3: '🥉', 2: '🥈', 1: '🥇' };
 
@@ -922,6 +922,23 @@ const state = {
 window.addEventListener('DOMContentLoaded', async () => {
   createStars();
 
+  // 标题半圆弧形效果
+  const title = document.querySelector('.main-title');
+  if (title) {
+    const text = title.textContent;
+    title.innerHTML = text.split('').map((char) => `<span>${char}</span>`).join('');
+    const chars = title.querySelectorAll('span');
+    const total = chars.length;
+    const radius = 300;
+    chars.forEach((char, i) => {
+      const angle = (Math.PI / (total + 1)) * (i + 1) - Math.PI / 2;
+      const x = Math.cos(angle) * radius;
+      const y = -Math.sin(angle) * radius;
+      char.style.display = 'inline-block';
+      char.style.transform = `translateY(${y}px)`;
+    });
+  }
+
   const params = new URLSearchParams(window.location.search);
   const isCheckin = params.get('action') === 'checkin';
 
@@ -959,29 +976,29 @@ function showCheckinDialog() {
   `;
   overlay.innerHTML = `
     <div style="
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background: linear-gradient(135deg, #fff0f5, #ffe0ec);
       border-radius: 24px; padding: 32px 28px; width: 320px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,215,0,0.2);
+      box-shadow: 0 20px 60px rgba(255,105,180,0.3);
+      border: 1px solid rgba(255,105,180,0.3);
       text-align: center; font-family: 'Noto Sans SC', sans-serif;
     ">
       <div style="width:56px;height:56px;margin:0 auto 16px;border-radius:50%;
-        background:linear-gradient(135deg,#07c160,#06ad56);
+        background:linear-gradient(135deg,#ff69b4,#ff1493);
         display:flex;align-items:center;justify-content:center;font-size:28px;">✅</div>
-      <h3 style="color:#ffd700;margin:0 0 8px;font-size:1.2rem;">签到成功</h3>
-      <p style="color:rgba(255,255,255,0.6);margin:0 0 20px;font-size:0.85rem;">请填写您的信息完成签到</p>
+      <h3 style="color:#ff1493;margin:0 0 8px;font-size:1.2rem;">签到成功</h3>
+      <p style="color:rgba(100,50,80,0.6);margin:0 0 20px;font-size:0.85rem;">请填写您的信息完成签到</p>
       <input id="checkinName" type="text" placeholder="请输入姓名" style="
-        width:100%;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);
-        background:rgba(255,255,255,0.08);color:#fff;font-size:1rem;
+        width:100%;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,105,180,0.25);
+        background:rgba(255,200,220,0.15);color:#333;font-size:1rem;
         outline:none;box-sizing:border-box;font-family:'Noto Sans SC',sans-serif;
         margin-bottom:12px;
-      " onfocus="this.style.borderColor='rgba(255,215,0,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
+      " onfocus="this.style.borderColor='rgba(255,105,180,0.6)'" onblur="this.style.borderColor='rgba(255,105,180,0.25)'">
       <button onclick="submitCheckin()" style="
         width:100%;padding:14px;border-radius:14px;border:none;
-        background:linear-gradient(135deg,#ffd700,#ffaa00);
-        color:#1a1a2e;font-size:1.05rem;font-weight:700;cursor:pointer;
+        background:linear-gradient(135deg,#ff69b4,#ff1493);
+        color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;
         font-family:'Noto Sans SC',sans-serif;
-        box-shadow:0 6px 20px rgba(255,215,0,0.3);
+        box-shadow:0 6px 20px rgba(255,105,180,0.3);
         transition:all 0.3s;
       ">确认签到</button>
     </div>
@@ -1034,7 +1051,7 @@ function showToast(message) {
   toast.style.cssText = `
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
     padding: 14px 28px; border-radius: 12px;
-    background: rgba(7, 193, 96, 0.95); color: #fff;
+    background: rgba(255, 105, 180, 0.95); color: #fff;
     font-size: 1rem; font-weight: 600; z-index: 1000;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 30px rgba(0,0,0,0.3);
@@ -1104,7 +1121,7 @@ function switchPhase(phase) {
     }
   } else if (phase === 'lottery2') {
     if (!state.phaseCompleted[3]) {
-      alert('请先完成三等奖抽奖！');
+      alert('请先完成幸运之星抽奖！');
       switchPhase('lottery3');
       return;
     }
@@ -1118,7 +1135,7 @@ function switchPhase(phase) {
     }
   } else if (phase === 'lottery1') {
     if (!state.phaseCompleted[2]) {
-      alert('请先完成二等奖抽奖！');
+      alert('请先完成超级幸运之星抽奖！');
       switchPhase('lottery2');
       return;
     }
@@ -1163,10 +1180,10 @@ function renderCheckinList() {
 
   list.innerHTML = state.participants.map((name, i) => {
     const isWinner = winnersArr.includes(name);
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#ffd700', '#ff6b35', '#07c160', '#00b4d8', '#e63946'];
+    const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ff85a2', '#ff3399', '#ff99cc', '#ff6699', '#e91e8c'];
     const color = colors[i % colors.length];
     const initial = name.charAt(0);
-    const winnerTag = isWinner ? ' <span style="color:#ffd700;font-size:0.75rem;">🏆 已中奖</span>' : '';
+    const winnerTag = isWinner ? ' <span style="color:#ff1493;font-size:0.75rem;">🏆 已中奖</span>' : '';
     return `
       <div class="checkin-item" style="${isWinner ? 'opacity:0.4' : ''}">
         <div class="avatar" style="background:${color}">${initial}</div>
@@ -1284,7 +1301,7 @@ function announceWinner(prizeLevel, winnerName) {
   stopBtn.style.display = 'none';
 
   // 显示中奖卡片
-  const prizeNames = { 3: '三等奖', 2: '二等奖', 1: '一等奖' };
+  const prizeNames = { 3: '幸运之星', 2: '超级幸运之星', 1: '超级幸运之星plus' };
   const prizeClasses = { 3: 'third', 2: 'second', 1: 'first' };
   const prizeEmojis = { 3: '🥉', 2: '🥈', 1: '🥇' };
 
@@ -1305,7 +1322,7 @@ function announceWinner(prizeLevel, winnerName) {
   } else if (prizeLevel === 2) {
     document.getElementById('nextBtn2').style.display = '';
   } else if (prizeLevel === 1) {
-    // 一等奖抽完，显示完成
+    // 超级幸运之星plus抽完，显示完成
     setTimeout(showFinishScreen, 1500);
   }
 
@@ -1329,7 +1346,7 @@ function showFinishScreen() {
   const screen = document.getElementById('finishScreen');
   const summary = document.getElementById('allWinnersSummary');
 
-  const prizeNames = { 3: '三等奖', 2: '二等奖', 1: '一等奖' };
+  const prizeNames = { 3: '幸运之星', 2: '超级幸运之星', 1: '超级幸运之星plus' };
   const prizeClasses = { 3: 'third', 2: 'second', 1: 'first' };
   const prizeEmojis = { 3: '🥉', 2: '🥈', 1: '🥇' };
 
@@ -1403,7 +1420,7 @@ function resetLottery() {
 // ============ 烟花/彩带效果 ============
 function launchConfetti() {
   const container = document.getElementById('confettiContainer');
-  const colors = ['#ffd700', '#ff6b35', '#ff416c', '#07c160', '#00b4d8', '#e63946', '#667eea', '#f093fb'];
+  const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ff85a2', '#ff3399', '#ff99cc', '#ffd1dc', '#e91e8c'];
 
   for (let i = 0; i < 80; i++) {
     const confetti = document.createElement('div');
