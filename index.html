@@ -1375,7 +1375,8 @@ function resetLottery() {
   [1, 2, 3].forEach(level => {
     document.getElementById(`startBtn${level}`).style.display = '';
     document.getElementById(`stopBtn${level}`).style.display = 'none';
-    document.getElementById(`nextBtn${level}`).style.display = 'none';
+    const nextBtn = document.getElementById(`nextBtn${level}`);
+    if (nextBtn) nextBtn.style.display = 'none';
     document.getElementById(`rollingName${level}`).textContent = '等待开始';
     document.getElementById(`rollingName${level}`).classList.remove('winner');
     document.getElementById(`nameBox${level}`).classList.remove('rolling');
