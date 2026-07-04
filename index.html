@@ -438,11 +438,28 @@
 
   /* ========== 手动添加 ========== */
   .add-section {
-    margin-bottom: 20px;
-    display: flex; gap: 8px;
+    margin-bottom: 15px;
+    display: flex; gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stats-inline {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .stats-inline .stat-num {
+    font-size: 1.3rem; font-weight: 900;
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stats-inline .stat-label {
+    font-size: 0.75rem; color: rgba(100,50,80,0.5);
+    margin-top: 0;
+  }
+  .stats-inline .stat-divider {
+    width: 1px; height: 24px;
+    background: rgba(255,105,180,0.3);
   }
   .add-input {
     padding: 10px 18px;
@@ -557,22 +574,21 @@
       </div>
     </div>
 
-    <!-- 手动添加参与者 -->
+    <!-- 统计 + 手动添加 -->
     <div class="add-section">
+      <div class="stats-inline">
+        <div class="stat-item">
+          <div class="stat-num" id="totalCount">0</div>
+          <div class="stat-label">签到</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="remainCount">0</div>
+          <div class="stat-label">可抽</div>
+        </div>
+      </div>
       <input type="text" class="add-input" id="nameInput" placeholder="输入参与者姓名" maxlength="20">
       <button class="add-btn" onclick="addParticipant()">➕ 添加</button>
-    </div>
-
-    <!-- 统计 -->
-    <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-num" id="totalCount">0</div>
-        <div class="stat-label">签到人数</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="remainCount">0</div>
-        <div class="stat-label">剩余可抽</div>
-      </div>
     </div>
 
     <!-- 签到列表 -->
