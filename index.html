@@ -763,11 +763,12 @@ async function yesApiCall(service, extraParams = {}) {
   try {
     const resp = await fetch(`${YESAPI_CONFIG.baseUrl}/?${params.toString()}`);
     const text = await resp.text();
-    try {
-      const outer = JSON.parse(text);
-      if (outer.data) return outer.data;
-    } catch(e) {}
-    return JSON.parse(text);
+    const outer = JSON.parse(text);
+    // return_data=1 时返回 {err_code, data}，data 里才是业务数据
+    if (outer.err_code !== undefined) {
+      return outer; // 返回完整结构 {err_code, data, ...}
+    }
+    return outer;
   } catch (e) {
     console.warn('[YesApi] 请求失败:', e);
     return null;
