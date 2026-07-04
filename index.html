@@ -1365,6 +1365,8 @@ function showFinishScreen() {
 }
 
 function resetLottery() {
+  // 清空所有状态
+  state.participants = [];
   state.winners = { 3: null, 2: null, 1: null };
   state.rolling = { 3: false, 2: false, 1: false };
   state.phaseCompleted = { 3: false, 2: false, 1: false };
@@ -1388,6 +1390,13 @@ function resetLottery() {
   switchPhase('checkin');
   updateStats();
   renderCheckinList();
+
+  // 同步到云端（清空数据）
+  saveToCloud();
+
+  // 清除签到标记，允许重新签到
+  sessionStorage.removeItem('wxScanned');
+  sessionStorage.removeItem('checkedName');
 }
 
 // ============ 烟花/彩带效果 ============
