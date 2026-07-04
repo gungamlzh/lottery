@@ -173,12 +173,13 @@
   }
   .checkin-item {
     display: flex; align-items: center; gap: 6px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 20px;
     background: rgba(255,200,220,0.15);
     animation: slideIn 0.3s ease;
-    width: calc(100% / 12 - 8px);
-    min-width: 90px;
+    width: calc(100% / 5 - 10px);
+    min-width: 110px;
+    max-width: 200px;
   }
   .checkin-item .avatar {
     width: 26px; height: 26px;
@@ -801,6 +802,11 @@ async function yesApiCall(service, extraParams = {}) {
 }
 
 // 初始化云端记录（加载已有数据）
+// 获取今天的日期字符串 YYYY-MM-DD
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 async function initCloudData() {
   // 获取最新的记录
   const result = await yesApiCall('FreeFindOne', {
@@ -812,6 +818,24 @@ async function initCloudData() {
   if (result && result.err_code === 0 && result.data) {
     try {
       const cloudData = JSON.parse(result.data.data_json || '{}');
+      // 检查日期，跨天则清空参与者
+      const today = getToday();
+      if (cloudData.date && cloudData.date !== today) {
+        // 跨天了，清空参与者和中奖结果，只保留空结构
+        cloudData.participants = [];
+        cloudData.winners = {3: null, 2: null, 1: null};
+        cloudData.phaseCompleted = {};
+        cloudData.date = today;
+        // 同步清空到云端
+        const id = result.data.id;
+        await yesApiCall('Update', {
+          id: String(id),
+          data: JSON.stringify({ data_json: JSON.stringify(cloudData) })
+        });
+        // 清除手机端签到标记
+        localStorage.removeItem('lotteryCheckedName');
+        return;
+      }
       if (cloudData.participants && cloudData.participants.length > 0) {
         state.participants = cloudData.participants;
         if (cloudData.winners) state.winners = cloudData.winners;
@@ -828,6 +852,7 @@ async function initCloudData() {
 // 保存数据到云端
 async function saveToCloud() {
   const cloudData = {
+    date: getToday(),
     participants: state.participants,
     winners: state.winners,
     phaseCompleted: state.phaseCompleted
@@ -951,7 +976,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   const isCheckin = params.get('action') === 'checkin';
 
   if (isCheckin && !sessionStorage.getItem('wxScanned')) {
-    // 签到模式：弹出签到表单
+    // 签到模式：检查日期，跨天则清除签到标记允许重新签到
+    const lastDate = localStorage.getItem('lotteryCheckedDate');
+    if (lastDate !== getToday()) {
+      localStorage.removeItem('lotteryCheckedName');
+      localStorage.removeItem('lotteryCheckedDate');
+    }
     sessionStorage.setItem('wxScanned', '1');
     showCheckinDialog();
   } else if (!isCheckin) {
@@ -1039,6 +1069,7 @@ function submitCheckin() {
 
   addParticipantDirect(name);
     localStorage.setItem('lotteryCheckedName', name);
+    localStorage.setItem('lotteryCheckedDate', getToday());
 
   // 关闭弹窗
   const overlay = document.getElementById('checkinOverlay');
