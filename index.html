@@ -747,7 +747,6 @@ const YESAPI_CONFIG = {
   baseUrl: 'https://api.yesapi.net',
   appKey: 'CB130BF8B0CD16C910DD906ABE99904D',
   tableName: 'lottery_session',
-  sessionId: new URLSearchParams(window.location.search).get('sid') || 'default',
   pollInterval: 3000,
   pollTimer: null
 };
@@ -764,8 +763,6 @@ async function yesApiCall(service, extraParams = {}) {
   try {
     const resp = await fetch(`${YESAPI_CONFIG.baseUrl}/?${params.toString()}`);
     const text = await resp.text();
-    console.log(`[YesApi] ${service}:`, text.substring(0, 200));
-    // YesApi return_data=1 直接返回 data 部分
     try {
       const outer = JSON.parse(text);
       if (outer.data) return outer.data;
@@ -777,12 +774,14 @@ async function yesApiCall(service, extraParams = {}) {
   }
 }
 
-// 初始化云端记录
+// 初始化云端记录（加载已有数据）
 async function initCloudData() {
-  // 先尝试查询
-  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
-  const result = await yesApiCall('FreeFindOne', { where: filter });
-  console.log('[YesApi] initCloudData result:', result);
+  // 获取最新的记录
+  const result = await yesApiCall('FreeFindOne', {
+    where: '[["id",">","0"]]',
+    fields: 'id,data_json',
+    order: 'id DESC'
+  });
   
   if (result && result.err_code === 0 && result.data) {
     try {
@@ -800,33 +799,42 @@ async function initCloudData() {
   }
 }
 
-// 保存数据到云端（使用 CheckCreateOrUpdate 实现幂等）
+// 保存数据到云端
 async function saveToCloud() {
   const cloudData = {
     participants: state.participants,
     winners: state.winners,
     phaseCompleted: state.phaseCompleted
   };
-  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
   
-  // 先查询获取 id
-  const findResult = await yesApiCall('FreeFindOne', { where: filter, fields: 'id' });
+  // 查询是否有记录
+  const findResult = await yesApiCall('FreeFindOne', { 
+    where: '[["id",">","0"]]',
+    fields: 'id',
+    order: 'id DESC'
+  });
+  
   if (findResult && findResult.err_code === 0 && findResult.data && findResult.data.id) {
-    // 存在则更新
-    const id = findResult.data.id;
-    const updateData = { data_json: JSON.stringify(cloudData) };
-    await yesApiCall('Update', { id: String(id), data: JSON.stringify(updateData) });
+    // 更新现有记录
+    await yesApiCall('Update', {
+      id: String(findResult.data.id),
+      data: JSON.stringify({ data_json: JSON.stringify(cloudData) })
+    });
   } else {
-    // 不存在则创建
-    const createData = { session_id: YESAPI_CONFIG.sessionId, data_json: JSON.stringify(cloudData) };
-    await yesApiCall('Create', { data: JSON.stringify(createData) });
+    // 创建新记录
+    await yesApiCall('Create', {
+      data: JSON.stringify({ data_json: JSON.stringify(cloudData) })
+    });
   }
 }
 
 // 从云端加载数据（轮询用）
 async function loadFromCloud() {
-  const filter = '[["session_id","=","' + YESAPI_CONFIG.sessionId + '"]]';
-  const result = await yesApiCall('FreeFindOne', { where: filter });
+  const result = await yesApiCall('FreeFindOne', {
+    where: '[["id",">","0"]]',
+    fields: 'id,data_json',
+    order: 'id DESC'
+  });
   if (result && result.err_code === 0 && result.data) {
     try {
       const cloudData = JSON.parse(result.data.data_json || '{}');
@@ -926,9 +934,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     startPolling();
   }
 
-  // 生成二维码（带 sid 参数确保同一会话）
+  // 生成二维码（签到链接）
   const baseUrl = window.location.href.split('?')[0];
-  const qrData = baseUrl + '?action=checkin&sid=' + YESAPI_CONFIG.sessionId + '&t=' + Date.now();
+  const qrData = baseUrl + '?action=checkin&t=' + Date.now();
   window.generateQRCode(qrData);
 });
 
